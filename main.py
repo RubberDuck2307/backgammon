@@ -1,42 +1,56 @@
-from time import sleep
+import time
 from typing import Union, Tuple, Optional
 
 import pygammon
-from basic_ai import BasicAi
 from pygammon import GameState, OutputType, InvalidMoveCode, Side, InputType
 
+from ai.basic_ai import BasicAi
 from renderer import BackgammonRenderer
 
-renderer = BackgammonRenderer()
 
-firstAi = BasicAi(Side.FIRST)
-secondAi = BasicAi(Side.SECOND)
+class Game:
+
+    def __init__(self):
+        self.renderer = BackgammonRenderer()
+        self.turn_counter = 0
+        self.firstAi = BasicAi(Side.FIRST)
+        self.secondAi = BasicAi(Side.SECOND)
+
+        self.next_player = None
+
+    def do_move_handler(self, side: Side) -> Tuple[InputType, Optional[Tuple[int, Optional[int]]]]:
+        move = self.firstAi.move() if side == Side.FIRST else self.secondAi.move()
+        print("move :", self.turn_counter, "player: ", Side(side).name,)
+        time.sleep(0.1)
+        return move
+
+    def current_game_state_handler(self, output_type: OutputType,
+                                   data: Union[GameState, Tuple[int, int], InvalidMoveCode, Side],
+                                   side: Optional[Side] = None):
+        if output_type == OutputType.GAME_STATE:
+            self.firstAi.update_game_state(data)
+            self.secondAi.update_game_state(data)
+            self.renderer.render(data)
+            self.turn_counter += 1
+
+        elif output_type == OutputType.TURN_ROLLS:
+            self.next_player = Side.FIRST if data[0] > data[1] else Side.SECOND
+            print("Turn rolls:", data, "Next player:", self.next_player)
 
 
-def do_move_handler(side: Side) -> Tuple[InputType, Optional[Tuple[int, Optional[int]]]]:
-    print("input",  Side(side))
-    sleep(5) #sleep between turns
-    return firstAi.move() if side == Side.FIRST else secondAi.move()
+        elif output_type == OutputType.MOVE_ROLLS:
+            print("Move rolls", data)
+            if self.next_player == Side.FIRST:
+                self.firstAi.update_available_moves(data)
+                self.next_player = 1
+            if self.next_player == Side.SECOND:
+                self.secondAi.update_available_moves(data)
+                self.next_player = 0
+
+        elif output_type == OutputType.INVALID_MOVE:
+            print("Invalid move:", data)
 
 
-def current_game_state_handler(output_type: OutputType,
-           data: Union[GameState, Tuple[int, int], InvalidMoveCode, Side],
-           side: Optional[Side] = None):
-    print("output", output_type, side)
-    if isinstance(data, GameState):
-        firstAi.update_game_state(data)
-        secondAi.update_game_state(data)
-        renderer.render(data)
-
-    elif isinstance(data, tuple):
-        first, second = data
-        print("rools", first, second)
-
-    elif isinstance(data, InvalidMoveCode):
-        print("Invalid:", data)
-
-    elif isinstance(data, Side):
-        print("Side:", data)
-
-#Check https://pygammon.readthedocs.io/en/latest/protocol.html
-pygammon.run(do_move_handler, current_game_state_handler)
+# Check https://pygammon.readthedocs.io/en/latest/protocol.html
+game = Game()
+pygammon.run(game.do_move_handler, game.current_game_state_handler)

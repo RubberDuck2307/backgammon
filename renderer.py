@@ -30,7 +30,7 @@ class BackgammonRenderer:
     For integration with an external event loop, skip run() and call
     renderer.root.update() manually.
     """
-
+    render_counter = 0
     CELL_W = 52  # width of each point column
     CELL_H = 220  # height of each point (triangle area)
     BAR_W = 48
@@ -74,6 +74,8 @@ class BackgammonRenderer:
         self.root.update_idletasks()
         self.root.update()
 
+        snapshot_canvas(self.canvas, filename=f"snap_{self.render_counter}.png")
+        self.render_counter += 1
 
     def _point_x(self, col: int) -> int:
         """Left x-coordinate of the col-th column (0-11 left half, 12-23 right half)."""
@@ -186,7 +188,7 @@ class BackgammonRenderer:
             self._draw_checker_stack(cx, base_y, direction, point.side, point.count)
 
     def _bar_cx(self) -> int:
-        return self.MARGIN + 12 * self.CELL_W + self.BAR_W // 2
+        return self.MARGIN + 12 * self.CELL_W//2 + self.BAR_W // 2
 
     def _draw_bar(self, state: GameState):
         """Draw hit checkers on the bar."""
@@ -220,3 +222,13 @@ class BackgammonRenderer:
             text=f"↓{state.first_borne}", fill=CHECKER_1,
             font=font, anchor="w"
         )
+
+from PIL import Image
+
+
+def snapshot_canvas(canvas, filename="snapshot.png"):
+    # Export canvas as PostScript
+    canvas.postscript(file="temp.ps", colormode='color')
+
+    img = Image.open("temp.ps")
+    img.save(filename)

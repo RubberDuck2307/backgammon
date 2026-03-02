@@ -1,0 +1,2 @@
+/ I am using ubuntu , not sure how this work on windows if problem arises try removing method "snapshot_canvas" in renderer.py
+apt install ghostscript
