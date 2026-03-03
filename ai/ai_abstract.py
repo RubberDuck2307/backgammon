@@ -88,6 +88,7 @@ class AiAbstractClass(ABC):
                                                      state["moves_to_reach_it"]))
 
         possible_game_states = UniqueGameStates()
+        #if states_first_then_second_dice and states_second_then_first_dice is empty we should add the moves from states_first_dice, states_second_dice.
         possible_game_states.extend(states_first_then_second_dice)
         possible_game_states.extend(states_second_then_first_dice)
 
@@ -110,6 +111,7 @@ class AiAbstractClass(ABC):
                                                          dice[3],
                                                          3,
                                                          state["moves_to_reach_it"]))
+            #need to handle the scenario when only 1,2,3 moves are possible
             possible_game_states = states_first_dice_4_times
         return possible_game_states
 
