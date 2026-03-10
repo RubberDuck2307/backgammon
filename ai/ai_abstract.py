@@ -121,6 +121,17 @@ class AiAbstractClass(ABC):
                 # if the move is not possible, we just skip it
             return possible_game_states
 
+        if generator.is_borne_off_possible(game_state, side, die):
+            print("Borne off possible for side", side)
+            for point_index in generator.get_all_tokens_ready_to_borne_off(game_state, side, die):
+                try:
+                    possible_game_states.append(
+                        generator.borne_off_token(game_state, side, point_index, dice_index, previous_moves))
+                except generator.NotPossibleMoveException:
+                    pass
+                    # if the move is not possible, we just skip it
+
+
         for point_index in self._get_all_movable_tokens_for_side(game_state, side):
             try:
                 possible_game_states.append(

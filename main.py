@@ -30,6 +30,11 @@ class Game:
     def current_game_state_handler(self, output_type: OutputType,
                                    data: Union[GameState, Tuple[int, int], InvalidMoveCode, Side],
                                    side: Optional[Side] = None):
+
+        if output_type == OutputType.GAME_WON:
+            print("Game over! Winner:", side)
+            return
+
         if output_type == OutputType.GAME_STATE:
             self.firstAi.update_game_state(data)
             self.secondAi.update_game_state(data)

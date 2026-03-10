@@ -74,6 +74,54 @@ def _token_movement_(game_state: GameState, current_side: Side, from_point: Opti
     return new_game_state
 
 
+def borne_off_token(game_state: GameState, side: Side, from_point: int, dice_index: int,
+                    previous_moves: List[Move] = None) -> PossibleGameState:
+    # check if the move is possible
+    new_game_state = copy.deepcopy(game_state)
+    if new_game_state.board[from_point].side != side or new_game_state.board[from_point].count <= 0:
+        raise NotPossibleMoveException("No token to move from the specified point")
+
+    new_game_state.board[from_point].count = new_game_state.board[from_point].count - 1
+    if new_game_state.board[from_point].count == 0:
+        new_game_state.board[from_point].side = None
+
+    if side == Side.FIRST:
+        new_game_state = new_game_state._replace(first_borne=new_game_state.first_borne + 1)
+    else:
+        new_game_state = new_game_state._replace(second_borne=new_game_state.second_borne + 1)
+
+    moves_to_reach_it = [(InputType.MOVE, (dice_index, from_point))]
+
+    if previous_moves is not None:
+        moves_to_reach_it = previous_moves + moves_to_reach_it
+
+    return PossibleGameState(possible_game_state=new_game_state, moves_to_reach_it=moves_to_reach_it)
+
+
+def is_borne_off_possible(game_state: GameState, side: Side, die) -> bool:
+    if side == Side.SECOND:
+        for i in range(18):
+            if game_state.board[i].side == Side.SECOND and game_state.board[i].count > 0:
+                return False
+        return game_state.board[24 - die].side == Side.SECOND and game_state.board[24 - die].count > 0
+    else:
+        for i in range(6, 24):
+            if game_state.board[i].side == Side.FIRST and game_state.board[i].count > 0:
+                return False
+        return game_state.board[die - 1].side == Side.FIRST and game_state.board[die - 1].count > 0
+
+
+def get_all_tokens_ready_to_borne_off(game_state: GameState, side: Side, die: int) -> List[int]:
+    tokens_ready_to_borne_off = []
+    if side == Side.SECOND:
+        if game_state.board[24 - die].side == Side.SECOND and game_state.board[24 - die].count > 0:
+            tokens_ready_to_borne_off.append(24 - die)
+    else:
+        if game_state.board[die - 1].side == Side.FIRST and game_state.board[die - 1].count > 0:
+            tokens_ready_to_borne_off.append(die - 1)
+    return tokens_ready_to_borne_off
+
+
 def move(game_state: GameState, side: Side, from_point: int, dice: int, dice_index: int,
          previous_moves: List[Move] = None) -> PossibleGameState:
     if side == Side.FIRST:
