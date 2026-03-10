@@ -52,6 +52,20 @@ class Game:
 
         elif output_type == OutputType.INVALID_MOVE:
             print("Invalid move:", data)
+        
+    
+    
+        elif output_type == OutputType.GAME_WON:
+            # pygammon signals end of game; data is the Side that won
+            winner = data
+            print(f"Game finished! Winner: {winner.name}")
+            try:
+                self.renderer.show_winner(winner)
+            except Exception:
+                pass
+            # keep the winner screen up for a couple of seconds before exit
+            time.sleep(3)
+
 
 
 # Check https://pygammon.readthedocs.io/en/latest/protocol.html

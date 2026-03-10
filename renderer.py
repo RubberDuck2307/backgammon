@@ -77,6 +77,25 @@ class BackgammonRenderer:
         snapshot_canvas(self.canvas, filename=f"snap_{self.render_counter}.png")
         self.render_counter += 1
 
+    def show_winner(self, side: Side):
+        #Draw end of game win screen 
+        
+        self.canvas.create_rectangle(
+            0, 0, self._W, self._H,
+            fill="black", stipple="gray25", outline=""
+        )
+        self.canvas.create_text(
+            self._W // 2,
+            self._H // 2,
+            text=f"{side.name} WINS!",
+            fill="yellow",
+            font=("Helvetica", 36, "bold")
+        )
+        self.root.update_idletasks()
+        self.root.update()
+        # save final snapshot
+        snapshot_canvas(self.canvas, filename=f"snap_win_{side.name}.png")
+
     def _point_x(self, col: int) -> int:
         """Left x-coordinate of the col-th column (0-11 left half, 12-23 right half)."""
 

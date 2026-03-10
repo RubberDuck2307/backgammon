@@ -115,7 +115,8 @@ class AiAbstractClass(ABC):
         if hit_tokens > 0:
             try:
                 possible_game_states.append(
-                    generator.restore_token(game_state, side, die, dice_index, previous_moves))
+                    generator.restore_token(game_state, side, die, dice_index, previous_moves)
+                )
             except generator.NotPossibleMoveException:
                 pass
                 # if the move is not possible, we just skip it
@@ -123,11 +124,21 @@ class AiAbstractClass(ABC):
 
         for point_index in self._get_all_movable_tokens_for_side(game_state, side):
             try:
+                # Normal move on the board
                 possible_game_states.append(
-                    generator.move(game_state, side, point_index, die, dice_index, previous_moves))
+                    generator.move(game_state, side, point_index, die, dice_index, previous_moves)
+                )
             except generator.NotPossibleMoveException:
                 pass
                 # if the move is not possible, we just skip it
+            # Additionally, try to bear off from this point, if rules allow it.
+            try:
+                possible_game_states.append(
+                    generator.borne_token(game_state, side, point_index, die, dice_index, previous_moves)
+                )
+            except generator.NotPossibleMoveException:
+                pass
+
         return possible_game_states
 
     def _get_all_movable_tokens(self, game_state: GameState):
