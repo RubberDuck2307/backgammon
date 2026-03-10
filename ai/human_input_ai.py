@@ -6,7 +6,7 @@ from game_state_generator import Move, PossibleGameState
 class HumanInputAI(AiAbstractClass):
 
     def move(self) -> Move:
-        if self.chosen_move is None:
+        if self._chosen_move_ is None:
             available_moves: UniqueGameStates = self.get_all_possible_moves(self.game_state, self.available_moves)
             print("Dices:", self.available_moves)
             for i, move in enumerate(available_moves.values()):

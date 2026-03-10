@@ -16,14 +16,26 @@ def game_state_key(gs: GameState) -> tuple:
         gs.second_hit,
         gs.second_borne,
     )
-
 class UniqueGameStates:
     def __init__(self):
         self._data: dict[tuple, PossibleGameState] = {}
+        self.max_moves: int = 0
 
     def append(self, state: PossibleGameState):
+        moves_used = len(state["moves_to_reach_it"])
+
+        if moves_used < self.max_moves:
+            return
+
         key = game_state_key(state["possible_game_state"])
-        self._data[key] = state  # overwrites duplicates
+
+        # If this state uses more moves than previous, reset the dict
+        if moves_used > self.max_moves:
+            self._data = {}
+            self.max_moves = moves_used
+
+        # Add / overwrite the state
+        self._data[key] = state
 
     def values(self) -> list[PossibleGameState]:
         return list(self._data.values())

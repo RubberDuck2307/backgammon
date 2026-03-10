@@ -8,27 +8,30 @@ from pygammon import GameState, Side
 class BasicAi(AiAbstractClass):
 
     def move(self) -> Move:
-        if self.chosen_move is None:
+        if self._chosen_move_ is None:
             available_moves: UniqueGameStates = self.get_all_possible_moves(self.game_state, self.available_moves)
-            if len(available_moves.values()) == 0:
-                self.get_all_possible_moves(self.game_state, self.available_moves) # for debug
+            if len(available_moves.values()) == 0 or available_moves.max_moves == 0:
+                self.get_all_possible_moves(self.game_state, self.available_moves)  # for debug
                 raise Exception("No possible moves to make, the code is not ready for this")
             min_value = 9999
             index_of_best_move = 0
             for move in available_moves.values():
-                value = self.heuristic(move["possible_game_state"])
+                value = self.heuristic(move["possible_game_state"], maximalize_hits=False)
                 if value < min_value:
                     min_value = value
                     index_of_best_move = available_moves.values().index(move)
-            self.chosen_move = available_moves.values()[index_of_best_move]["moves_to_reach_it"]
-            for move in self.chosen_move:
+            chosen_move = available_moves.values()[index_of_best_move]["moves_to_reach_it"]
+            self.chose_move(chosen_move)
+            print("player :", self.side, "chosing moves:")
+            for move in chosen_move:
                 print_move(move)
         return self.proceed_with_move()
 
-    def heuristic(self, game_state: GameState) -> int:
+    def heuristic(self, game_state: GameState, maximalize_hits:bool = False) -> int:
         value = 0
         for i, point in enumerate(game_state.board):
             if point.side == self.side:
                 value += point.count * (24 - i) if self.side == Side.FIRST else point.count * (i + 1)
+            if maximalize_hits:
+                value -= game_state.first_hit * 100 if self.side == Side.SECOND else game_state.second_hit * 100
         return value
-

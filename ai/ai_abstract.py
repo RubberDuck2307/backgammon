@@ -10,7 +10,7 @@ from game_state_generator import Move
 
 
 class AiAbstractClass(ABC):
-    chosen_move: Optional[List[Move]] = None
+    _chosen_move_: Optional[List[Move]] = None
     game_state: GameState = None
     available_moves: Tuple[int, int] | Tuple[int, int, int, int] = None
     side: Side = None
@@ -25,11 +25,15 @@ class AiAbstractClass(ABC):
         pass
 
     def proceed_with_move(self):
-        move_to_make = self.chosen_move[len(self.chosen_move) - self.move_counter]
+        move_to_make = self._chosen_move_[len(self._chosen_move_) - self.move_counter]
         self.move_counter -= 1
         if self.move_counter == 0:
-            self.chosen_move = None
+            self._chosen_move_ = None
         return move_to_make
+
+    def chose_move(self, move: List[Move]):
+        self._chosen_move_ = move
+        self.move_counter = len(move)
 
     def update_game_state(self, game_state: GameState):
         self.game_state = game_state
@@ -59,7 +63,8 @@ class AiAbstractClass(ABC):
         else:
             dice_orders = [(0, 1), (1, 0)]
 
-        possible_game_states = UniqueGameStates()
+        all_order_states = []
+
         for order in dice_orders:
             frontier = UniqueGameStates()
             frontier.append({"possible_game_state": game_state, "moves_to_reach_it": []})
@@ -83,9 +88,20 @@ class AiAbstractClass(ABC):
                         next_frontier.extend(states_after_die)
                 frontier = next_frontier
 
-            possible_game_states.extend(frontier)
+            # Keep track of how many moves were actually used in this order
+            if len(frontier) > 0:
+                all_order_states.append((frontier.max_moves, frontier))
 
-        return possible_game_states
+        # Only keep orders that achieved the maximum number of moves
+        if all_order_states:
+            max_moves_overall = max(moves for moves, _ in all_order_states)
+            possible_game_states = UniqueGameStates()
+            for moves, states in all_order_states:
+                if moves == max_moves_overall:
+                    possible_game_states.extend(states)
+            return possible_game_states
+        else:
+            return UniqueGameStates()
 
     def _get_all_possible_moves_one_die(self, game_state: GameState, hit_tokens, die: int, dice_index: int,
                                         previous_moves=None):
