@@ -47,9 +47,9 @@ def _token_movement_(game_state: GameState, current_side: Side, from_point: Opti
 
     elif new_game_state.board[to_point].side != current_side and new_game_state.board[to_point].count == 1:
         if current_side == Side.FIRST:
-            new_game_state = new_game_state._replace(first_hit=new_game_state.first_hit + 1)
-        else:
             new_game_state = new_game_state._replace(second_hit=new_game_state.second_hit + 1)
+        else:
+            new_game_state = new_game_state._replace(first_hit=new_game_state.first_hit + 1)
         new_game_state.board[to_point].side = None
         new_game_state.board[to_point].count = 0
 

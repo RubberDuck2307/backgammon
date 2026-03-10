@@ -5,6 +5,7 @@ import pygammon
 from pygammon import GameState, OutputType, InvalidMoveCode, Side, InputType
 
 from ai.basic_ai import BasicAi
+from ai.human_input_ai import print_move
 from renderer import BackgammonRenderer
 
 
@@ -20,8 +21,10 @@ class Game:
 
     def do_move_handler(self, side: Side) -> Tuple[InputType, Optional[Tuple[int, Optional[int]]]]:
         move = self.firstAi.move() if side == Side.FIRST else self.secondAi.move()
-        print("move :", self.turn_counter, "player: ", Side(side).name,)
-        time.sleep(0.1)
+        print(f"{self.turn_counter}. move by player: {Side(side).name}")
+        print_move(move)
+
+        time.sleep(0.01)
         return move
 
     def current_game_state_handler(self, output_type: OutputType,
@@ -39,13 +42,13 @@ class Game:
 
 
         elif output_type == OutputType.MOVE_ROLLS:
-            print("Move rolls", data)
+            print(f"\nMOVE ROLLS for player: {self.next_player}", data)
             if self.next_player == Side.FIRST:
                 self.firstAi.update_available_moves(data)
-                self.next_player = 1
-            if self.next_player == Side.SECOND:
+                self.next_player = Side.SECOND
+            elif self.next_player == Side.SECOND:
                 self.secondAi.update_available_moves(data)
-                self.next_player = 0
+                self.next_player = Side.FIRST
 
         elif output_type == OutputType.INVALID_MOVE:
             print("Invalid move:", data)

@@ -60,3 +60,67 @@ Make new method/methods in AiAbstract that utilize _get_all_possible_moves_one_d
 For each possible game state it should return the chance of reaching the state. You can experiment with different depths, etc... 
 
 You can try to collaborate with Vita because she can measure the value of the board as chance of reaching next board
+
+### Stochastic generation (simple notes) Asger
+
+This is now implemented in `ai/ai_abstract.py`.
+
+Think of it like this:
+
+- We do not know the next dice roll yet.
+- So we try all possible dice results.
+- For each result, we generate all legal end-board states.
+- Then we assign a probability ("chance") to each end-board state.
+
+#### Main methods
+
+- `get_all_possible_moves_for_side(game_state, dice, side)`
+  - Same idea as `get_all_possible_moves`, but for any side (FIRST or SECOND).
+  - Useful when simulating the opponent.
+
+- `generate_next_turn_state_distribution(game_state, side, move_policy="uniform", state_evaluator=None)`
+  - Returns a dictionary: `state_key -> probability`.
+  - This is for one full turn (one player move turn).
+
+- `generate_state_distribution_n_ply(game_state, side_to_move, depth, move_policy="uniform", state_evaluator=None)`
+  - Same as above, but repeated for more turns (`depth` plies).
+  - Alternates player side every ply.
+
+#### Policies (important)
+
+- `move_policy="uniform"`:
+  - If there are many legal end states for one dice result, split that dice chance evenly between them.
+
+- `move_policy="best"`:
+  - Pick one best end state for that dice result (using `state_evaluator`).
+  - Give all that dice chance to the chosen state.
+
+#### Dice chances used
+
+- doubles like `(3,3)`: `1/36`
+- non-doubles like `(2,5)`: `2/36`
+
+#### Quick example
+
+```python
+distribution = self.generate_next_turn_state_distribution(self.game_state, Side.SECOND)
+print("reachable states:", len(distribution))
+print("sum of chances:", sum(distribution.values()))  # should be close to 1.0
+```
+
+Best-policy example:
+
+```python
+distribution = self.generate_next_turn_state_distribution(
+    self.game_state,
+    Side.SECOND,
+    move_policy="best",
+    state_evaluator=lambda state, side: self.heuristic(state),
+)
+```
+
+#### Team assumptions
+
+- We track chance of final board states (not chance of exact move sequences).
+- If two paths end in the same board state, their probabilities are added together.
+- If a die cannot be played in a path, that path keeps the same state and continues with the next die.
