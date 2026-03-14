@@ -1,7 +1,7 @@
 from ai.ai_abstract import AiAbstractClass
 from ai.human_input_ai import print_move
-from game_state_dict import UniqueGameStates
-from game_state_generator import Move
+from game_state_dict import UniqueGameStates, Move
+from game_state_generator import  get_all_possible_moves
 from pygammon import GameState, Side
 
 
@@ -9,9 +9,8 @@ class BasicAi(AiAbstractClass):
 
     def move(self) -> Move:
         if self._chosen_move_ is None:
-            available_moves: UniqueGameStates = self.get_all_possible_moves(self.game_state, self.available_moves)
+            available_moves: UniqueGameStates = get_all_possible_moves(self.game_state, self.available_moves, self.side)
             if len(available_moves.values()) == 0 or available_moves.max_moves == 0:
-                self.get_all_possible_moves(self.game_state, self.available_moves)  # for debug
                 raise Exception("No possible moves to make, the code is not ready for this")
             min_value = 9999
             index_of_best_move = 0

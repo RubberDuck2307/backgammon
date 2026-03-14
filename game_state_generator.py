@@ -2,7 +2,7 @@ from typing import TypedDict, TypeAlias, Tuple, Optional, List
 from pygammon import Side, GameState, InputType
 import copy
 
-Move: TypeAlias = Tuple[InputType, Optional[Tuple[int, Optional[int]]]]
+from game_state_dict import UniqueGameStates, Move, PossibleGameState
 
 
 class NotPossibleMoveException(Exception):
@@ -10,9 +10,106 @@ class NotPossibleMoveException(Exception):
         super().__init__(message)
 
 
-class PossibleGameState(TypedDict):
-    possible_game_state: GameState
-    moves_to_reach_it: List[Move]
+def get_hit_tokens(game_state: GameState, side: Side) -> int:
+    return game_state.first_hit if side == Side.FIRST else game_state.second_hit
+
+def get_all_possible_moves( game_state: GameState, dice: Tuple[int, ...], side:Side) -> UniqueGameStates:
+    return get_all_possible_moves_for_side(game_state, dice, side)
+
+def get_all_possible_moves_for_side(game_state: GameState, dice: Tuple[int, ...], side: Side) -> UniqueGameStates:
+    if len(dice) == 4:
+        dice_orders = [(0, 1, 2, 3)]
+    else:
+        dice_orders = [(0, 1), (1, 0)]
+
+    all_order_states = []
+
+    for order in dice_orders:
+        frontier = UniqueGameStates()
+        frontier.append({"possible_game_state": game_state, "moves_to_reach_it": []})
+
+        for dice_index in order:
+            next_frontier = UniqueGameStates()
+            for state in frontier.values():
+                state_game = state["possible_game_state"]
+                states_after_die = get_all_possible_moves_one_die_for_side(
+                    state_game,
+                    get_hit_tokens(state_game, side),
+                    dice[dice_index],
+                    dice_index,
+                    side,
+                    state["moves_to_reach_it"],
+                )
+                # If this die cannot be played for this path, keep the state and continue with next die.
+                if len(states_after_die) == 0:
+                    next_frontier.append(state)
+                else:
+                    next_frontier.extend(states_after_die)
+            frontier = next_frontier
+
+        # Keep track of how many moves were actually used in this order
+        if len(frontier) > 0:
+            all_order_states.append((frontier.max_moves, frontier))
+
+    # Only keep orders that achieved the maximum number of moves
+    if all_order_states:
+        max_moves_overall = max(moves for moves, _ in all_order_states)
+        possible_game_states = UniqueGameStates()
+        for moves, states in all_order_states:
+            if moves == max_moves_overall:
+                possible_game_states.extend(states)
+        return possible_game_states
+    else:
+        return UniqueGameStates()
+
+def _get_all_possible_moves_one_die(game_state: GameState, hit_tokens, die: int, dice_index: int,  side: Side,
+                                    previous_moves=None,):
+    return get_all_possible_moves_one_die_for_side(
+        game_state, hit_tokens, die, dice_index, side, previous_moves
+    )
+
+def get_all_possible_moves_one_die_for_side(game_state: GameState, hit_tokens, die: int, dice_index: int,
+                                            side: Side, previous_moves=None):
+    possible_game_states = UniqueGameStates()
+    if hit_tokens > 0:
+        try:
+            possible_game_states.append(
+                restore_token(game_state, side, die, dice_index, previous_moves)
+            )
+        except NotPossibleMoveException:
+            pass
+            # if the move is not possible, we just skip it
+        return possible_game_states
+
+    for point_index in get_all_movable_tokens_for_side(game_state, side):
+        try:
+            # Normal move on the board
+            possible_game_states.append(
+                move(game_state, side, point_index, die, dice_index, previous_moves)
+            )
+        except NotPossibleMoveException:
+            pass
+            # if the move is not possible, we just skip it
+        # Additionally, try to bear off from this point, if rules allow it.
+        try:
+            possible_game_states.append(
+                borne_token(game_state, side, point_index, die, dice_index, previous_moves)
+            )
+        except NotPossibleMoveException:
+            pass
+
+    return possible_game_states
+
+def get_all_movable_tokens(game_state: GameState, side: Side):
+    return get_all_movable_tokens_for_side(game_state, side)
+
+def get_all_movable_tokens_for_side(game_state: GameState, side: Side):
+    movable_tokens = []
+    for i, point in enumerate(game_state.board):
+        if point.side == side and point.count > 0:
+            movable_tokens.append(i)
+    return movable_tokens
+
 
 
 def restore_token(game_state, side: Side, dice: int, dice_index: int,

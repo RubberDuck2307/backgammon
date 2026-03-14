@@ -1,7 +1,7 @@
 from ai.ai_abstract import AiAbstractClass
 from ai.human_input_ai import print_move
-from game_state_dict import UniqueGameStates
-from game_state_generator import Move
+from game_state_dict import UniqueGameStates, Move
+from game_state_generator import get_all_possible_moves
 from pygammon import GameState, Side
 
 
@@ -18,9 +18,8 @@ class GreedyBestFirstAi(AiAbstractClass):
 
     def move(self) -> Move:
         if self._chosen_move_ is None:
-            available_moves: UniqueGameStates = self.get_all_possible_moves(
-                self.game_state, self.available_moves
-            )
+            available_moves: UniqueGameStates = get_all_possible_moves(
+                self.game_state, self.available_moves, self.side)
 
             if len(available_moves.values()) == 0 or available_moves.max_moves == 0:
                 raise Exception("No possible moves to make, the code is not ready for this")
@@ -44,7 +43,8 @@ class GreedyBestFirstAi(AiAbstractClass):
                 print_move(move)
 
         return self.proceed_with_move()
-#play around with weights!
+
+    # play around with weights!
     def heuristic_new(self, game_state: GameState, maximalize_hits: bool = False) -> int:
         value = 0
         opponent = Side.SECOND if self.side == Side.FIRST else Side.FIRST
@@ -68,16 +68,16 @@ class GreedyBestFirstAi(AiAbstractClass):
 
                     # home-board point reward
                     in_home_board = (
-                        (self.side == Side.FIRST and 0 <= i <= 5)
-                        or (self.side == Side.SECOND and 18 <= i <= 23)
+                            (self.side == Side.FIRST and 0 <= i <= 5)
+                            or (self.side == Side.SECOND and 18 <= i <= 23)
                     )
                     if in_home_board:
                         value -= 14
 
                     # anchor reward
                     in_opponent_home = (
-                        (self.side == Side.FIRST and 18 <= i <= 23)
-                        or (self.side == Side.SECOND and 0 <= i <= 5)
+                            (self.side == Side.FIRST and 18 <= i <= 23)
+                            or (self.side == Side.SECOND and 0 <= i <= 5)
                     )
                     if in_opponent_home:
                         value -= 8
@@ -106,9 +106,6 @@ class GreedyBestFirstAi(AiAbstractClass):
             value -= 15 * opp_bar
 
         return int(value)
-    
+
     def evaluate_state(self, game_state: GameState) -> int:
         return self.heuristic_new(game_state, maximalize_hits=False)
-    
-
-    

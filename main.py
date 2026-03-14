@@ -5,6 +5,7 @@ import pygammon
 from pygammon import GameState, OutputType, InvalidMoveCode, Side, InputType
 
 from ai.basic_ai import BasicAi
+from ai.greedy_best_first_ai import GreedyBestFirstAi
 from ai.human_input_ai import print_move
 from renderer import BackgammonRenderer
 
@@ -15,7 +16,7 @@ class Game:
         self.renderer = BackgammonRenderer()
         self.turn_counter = 0
         self.firstAi = BasicAi(Side.FIRST)
-        self.secondAi = BasicAi(Side.SECOND)
+        self.secondAi = GreedyBestFirstAi(Side.SECOND)
 
         self.next_player = None
 

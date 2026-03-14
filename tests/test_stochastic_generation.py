@@ -5,7 +5,7 @@ from pygammon import GameState, InputType, Side
 from pygammon.structures import Point
 
 from ai.ai_abstract import AiAbstractClass
-from game_state_generator import Move
+from game_state_dict import Move
 
 
 class DummyAi(AiAbstractClass):

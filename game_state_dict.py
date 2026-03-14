@@ -1,6 +1,12 @@
-from pygammon import GameState
+from pygammon import GameState, InputType
 
-from game_state_generator import PossibleGameState
+from typing import List, TypedDict, TypeAlias, Optional, Tuple
+
+Move: TypeAlias = Tuple[InputType, Optional[Tuple[int, Optional[int]]]]
+
+class PossibleGameState(TypedDict):
+    possible_game_state: GameState
+    moves_to_reach_it: List[Move]
 
 
 def game_state_key(gs: GameState) -> tuple:
@@ -8,6 +14,7 @@ def game_state_key(gs: GameState) -> tuple:
         (point.side, point.count)
         for point in gs.board
     )
+
 
     return (
         board_key,

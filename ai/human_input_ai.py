@@ -1,13 +1,13 @@
 from ai.ai_abstract import AiAbstractClass
-from game_state_dict import UniqueGameStates
-from game_state_generator import Move, PossibleGameState
+from game_state_dict import UniqueGameStates, Move, PossibleGameState
+from game_state_generator import get_all_possible_moves
 
 
 class HumanInputAI(AiAbstractClass):
 
     def move(self) -> Move:
         if self._chosen_move_ is None:
-            available_moves: UniqueGameStates = self.get_all_possible_moves(self.game_state, self.available_moves)
+            available_moves: UniqueGameStates = get_all_possible_moves(self.game_state, self.available_moves, self.side)
             print("Dices:", self.available_moves)
             for i, move in enumerate(available_moves.values()):
                 print_available_move(move, i)
