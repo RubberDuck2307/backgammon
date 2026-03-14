@@ -193,6 +193,13 @@ def _all_tokens_in_home(game_state: GameState, side: Side) -> bool:
                 return False
     return True
 
+def is_game_over(game_state: GameState) -> Optional[Side]:
+    if game_state.first_borne >= 15:
+        return Side.FIRST
+    if game_state.second_borne >= 15:
+        return Side.SECOND
+    return None
+
 def borne_token(
     game_state: GameState,
     side: Side,
@@ -229,7 +236,7 @@ def borne_token(
             # Only allowed if there are no checkers on higher home points (further away).
             for idx in range(from_point + 1, 6):
                 point = game_state.board[idx]
-                if point.side == side and point.count > 0:
+                if point.side == side and point.count > 0 and can_point_move(game_state, side, from_point, dice):
                     raise NotPossibleMoveException("Cannot bear off with higher die; checker behind")
 
     else:  # Side.SECOND
@@ -244,7 +251,7 @@ def borne_token(
             # Only allowed if there are no checkers on lower home points (further away).
             for idx in range(18, from_point):
                 point = game_state.board[idx]
-                if point.side == side and point.count > 0:
+                if point.side == side and point.count > 0 and can_point_move(game_state, side, from_point, dice):
                     raise NotPossibleMoveException("Cannot bear off with higher die; checker behind")
 
     new_game_state = copy.deepcopy(game_state)
@@ -281,3 +288,11 @@ def move(game_state: GameState, side: Side, from_point: int, dice: int, dice_ind
     if previous_moves is not None:
         moves_to_reach_it = previous_moves + moves_to_reach_it
     return PossibleGameState(possible_game_state=new_game_state, moves_to_reach_it=moves_to_reach_it)
+
+
+def can_point_move(game_state: GameState, side: Side, from_point: int, dice: int) -> bool:
+    try:
+        move(game_state, side, from_point, dice, 0)
+        return True
+    except NotPossibleMoveException:
+        return False

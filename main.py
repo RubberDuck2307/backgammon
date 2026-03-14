@@ -5,8 +5,8 @@ import pygammon
 from pygammon import GameState, OutputType, InvalidMoveCode, Side, InputType
 
 from ai.basic_ai import BasicAi
-from ai.greedy_best_first_ai import GreedyBestFirstAi
 from ai.human_input_ai import print_move
+from ai.monte_carlo_ai import MonteCarloAi
 from renderer import BackgammonRenderer
 
 
@@ -15,9 +15,9 @@ class Game:
     def __init__(self):
         self.renderer = BackgammonRenderer()
         self.turn_counter = 0
-        self.firstAi = BasicAi(Side.FIRST)
-        self.secondAi = GreedyBestFirstAi(Side.SECOND)
-
+        self.firstAi = MonteCarloAi(Side.FIRST)
+        self.secondAi = BasicAi(Side.SECOND)
+        self.current_game_state : GameState
         self.next_player = None
 
     def do_move_handler(self, side: Side) -> Tuple[InputType, Optional[Tuple[int, Optional[int]]]]:
@@ -25,15 +25,13 @@ class Game:
         print(f"{self.turn_counter}. move by player: {Side(side).name}")
         print_move(move)
 
-        time.sleep(0.01)
         return move
 
     def current_game_state_handler(self, output_type: OutputType,
                                    data: Union[GameState, Tuple[int, int], InvalidMoveCode, Side],
                                    side: Optional[Side] = None):
         if output_type == OutputType.GAME_STATE:
-            self.firstAi.update_game_state(data)
-            self.secondAi.update_game_state(data)
+            self.current_game_state = data
             self.renderer.render(data)
             self.turn_counter += 1
 
@@ -45,9 +43,11 @@ class Game:
         elif output_type == OutputType.MOVE_ROLLS:
             print(f"\nMOVE ROLLS for player: {self.next_player}", data)
             if self.next_player == Side.FIRST:
+                self.firstAi.update_game_state(self.current_game_state)
                 self.firstAi.update_available_moves(data)
                 self.next_player = Side.SECOND
             elif self.next_player == Side.SECOND:
+                self.secondAi.update_game_state(self.current_game_state)
                 self.secondAi.update_available_moves(data)
                 self.next_player = Side.FIRST
 
@@ -61,6 +61,7 @@ class Game:
             winner = data
             print(f"Game finished! Winner: {winner.name}")
             try:
+                pass
                 self.renderer.show_winner(winner)
             except Exception:
                 pass

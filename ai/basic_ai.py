@@ -25,13 +25,11 @@ class BasicAi(AiAbstractClass):
             for move in chosen_move:
                 print_move(move)
         return self.proceed_with_move()
-#chooses the move with the lowest heuristic value
+    #chooses the move with the lowest heuristic value
     def heuristic(self, game_state: GameState, maximalize_hits:bool = False) -> int:
         value = 0
+        home = 0 if self.side == Side.FIRST else 23
         for i, point in enumerate(game_state.board):
             if point.side == self.side:
-                value += point.count * (24 - i) if self.side == Side.FIRST else point.count * (i + 1)
-            if maximalize_hits:
-                value -= game_state.first_hit * 100 if self.side == Side.SECOND else game_state.second_hit * 100
+                value += point.count * abs(home - i)
         return value
-        
