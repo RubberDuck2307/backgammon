@@ -39,7 +39,7 @@ class BackgammonRenderer:
     PAD_TOP = 40  # space for point labels
     PAD_BOT = 40
 
-    def __init__(self):
+    def __init__(self, save_snapshots: bool = False):
         self.root = tk.Tk()
         self.root.title("Backgammon")
         self.root.configure(bg=BG)
@@ -59,6 +59,7 @@ class BackgammonRenderer:
         self._W = total_w
         self._H = total_h
         self._state: Optional[GameState] = None
+        self.save_snapshots = save_snapshots
 
     # public ──────────────────────────────────────────────────────────────────
 
@@ -74,8 +75,9 @@ class BackgammonRenderer:
         self.root.update_idletasks()
         self.root.update()
 
-        snapshot_canvas(self.canvas, filename=f"snap_{self.render_counter}.png")
-        self.render_counter += 1
+        if self.save_snapshots:
+            snapshot_canvas(self.canvas, filename=f"snap_{self.render_counter}.png")
+            self.render_counter += 1
 
     def show_winner(self, side: Side):
         #Draw end of game win screen 
@@ -93,8 +95,8 @@ class BackgammonRenderer:
         )
         self.root.update_idletasks()
         self.root.update()
-        # save final snapshot
-        snapshot_canvas(self.canvas, filename=f"snap_win_{side.name}.png")
+        if self.save_snapshots:
+            snapshot_canvas(self.canvas, filename=f"snap_win_{side.name}.png")
 
     def _point_x(self, col: int) -> int:
         """Left x-coordinate of the col-th column (0-11 left half, 12-23 right half)."""

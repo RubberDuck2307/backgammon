@@ -6,7 +6,7 @@ from pygammon import GameState, OutputType, InvalidMoveCode, Side, InputType
 
 from ai.basic_ai import BasicAi
 from ai.human_input_ai import print_move
-from ai.monte_carlo_ai import MonteCarloAi
+from ai.expectiminimax_ai import ExpectiminimaxAi
 from renderer import BackgammonRenderer
 
 
@@ -15,7 +15,9 @@ class Game:
     def __init__(self):
         self.renderer = BackgammonRenderer()
         self.turn_counter = 0
-        self.firstAi = MonteCarloAi(Side.FIRST)
+        self.firstAi = ExpectiminimaxAi(Side.FIRST)
+        self.firstAi.search_depth = 1
+        self.firstAi.dice_samples = 12
         self.secondAi = BasicAi(Side.SECOND)
         self.current_game_state : GameState
         self.next_player = None
