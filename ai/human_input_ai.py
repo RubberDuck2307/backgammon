@@ -30,4 +30,4 @@ def print_move(move: Move):
     if move[1][1] is None:
         print("- Restore token from bar using dice index", move[1][0], )
     else:
-        print("- Move token from point", move[1][1] + 1, "using dice", move[1][0])
+        print("- Move token from point", move[1][1], "using dice", move[1][0])

@@ -17,6 +17,9 @@ def get_all_possible_moves( game_state: GameState, dice: Tuple[int, ...], side:S
     return get_all_possible_moves_for_side(game_state, dice, side)
 
 def get_all_possible_moves_for_side(game_state: GameState, dice: Tuple[int, ...], side: Side) -> UniqueGameStates:
+    if dice[0] == dice[1]:
+         dice = (dice[0], dice[1], dice[0], dice[1])
+
     if len(dice) == 4:
         dice_orders = [(0, 1, 2, 3)]
     else:
