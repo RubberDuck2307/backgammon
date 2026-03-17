@@ -12,10 +12,16 @@ class AiAbstractClass(ABC):
     game_state: GameState = None
     available_moves: Tuple[int, int] | Tuple[int, int, int, int] = None
     side: Side = None
+    opponent: Side = None
     move_counter: int = 0
 
     def __init__(self, side: Side):
         self.side = side
+        self.opponent = self.other_side(side)
+
+    @staticmethod
+    def other_side(side: Side) -> Side:
+        return Side.SECOND if side == Side.FIRST else Side.FIRST
 
     @abstractmethod
     def move(self) -> Move:
