@@ -140,5 +140,14 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    from ai.expectiminimax_ai import Expectiminimaxai
+    from ai.random_ai import RandomAi
+    from ai.basic_ai import BasicAi
+    from simulation.simulation import run_match
+
+    run_match(
+        Expectiminimaxai,
+        RandomAi,
+        games=100,
+    )
 

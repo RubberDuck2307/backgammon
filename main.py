@@ -9,6 +9,7 @@ from ai.human_input_ai import print_move
 from renderer import BackgammonRenderer
 
 
+
 class Game:
 
     def __init__(self, first_ai_cls=BasicAi, second_ai_cls=BasicAi):
