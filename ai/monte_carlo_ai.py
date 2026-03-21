@@ -2,7 +2,7 @@ import random
 from multiprocessing import Pool, cpu_count
 from typing import Optional, List, Tuple
 
-from pygammon import GameState, Side
+from engine.engine_types import GameState, Side
 from tqdm import tqdm
 
 from ai.ai_abstract import AiAbstractClass
@@ -14,7 +14,7 @@ from mc_structure import GameNode, DiceNode, SearchStep
 
 class MonteCarloAi(AiAbstractClass):
     parent_node: Optional[GameNode] = None
-    search_limit: int = 200
+    search_limit: int = 400
     search_depth: int = 30
 
     def __init__(self, side: Side):

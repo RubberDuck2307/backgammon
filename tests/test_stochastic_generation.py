@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import pytest
-from pygammon import GameState, InputType, Side
-from pygammon.structures import Point
+from engine.engine_types import GameState, InputType, Side, Point
 
 from ai.ai_abstract import AiAbstractClass
 from game_state_dict import Move

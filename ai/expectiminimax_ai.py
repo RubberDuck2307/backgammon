@@ -1,4 +1,4 @@
-from pygammon import GameState, Side
+from engine.engine_types import GameState, Side
 
 from ai.ai_abstract import AiAbstractClass
 from ai.heuristics import heuristic_new

@@ -1,4 +1,4 @@
-from pygammon import GameState, Side
+from engine.engine_types import GameState, Side
 
 
 def heuristic_new(game_state: GameState, side: Side, maximalize_hits: bool = False) -> int:

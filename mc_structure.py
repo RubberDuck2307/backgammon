@@ -1,7 +1,7 @@
 import math
 from typing import List, Tuple
 
-from pygammon import Side, GameState
+from engine.engine_types import Side, GameState
 
 from game_state_dict import game_state_key
 from game_state_generator import PossibleGameState
@@ -112,23 +112,6 @@ class DiceNode:
         # print(f"Best child visits: {best_child.visits}, wins: {best_child.visits - best_child.wins}, win rate: { 1 - (best_child.wins / best_child.visits)}")
         return best_child.game_state
 
-    # def best_child(self, by_winrate: bool = True) -> PossibleGameState:
-    #     best_score = -1
-    #     best_child = None
-    #     for child in self.next_game_states.values():
-    #         if by_winrate:
-    #             if child.visits == 0:
-    #                 score = 0  # avoid division by zero
-    #             else:
-    #                 score = child.wins / child.visits
-    #         else:
-    #             score = child.visits
-    #
-    #         if score > best_score:
-    #             best_score = score
-    #             best_child = child
-    #
-    #     return best_child.game_state
 
     def merge(self, other: "DiceNode"):
         if self.dice_outcome != other.dice_outcome:
@@ -180,7 +163,7 @@ class GameNode:
         child.back_propagate(search_sequence[1:], winner)
 
     def merge(self, other: "GameNode"):
-        if self.game_state != other.game_state:
+        if self.game_state["possible_game_state"] != other.game_state["possible_game_state"]:
             print("Can only merge nodes with the same game state")
             return
 

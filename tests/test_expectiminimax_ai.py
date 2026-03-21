@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from pygammon import GameState, InputType, Side
-from pygammon.structures import Point
+from engine.engine_types import GameState, InputType, Side, Point
 
 from ai.expectiminimax_ai import ExpectiminimaxAi
 

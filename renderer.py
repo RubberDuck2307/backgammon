@@ -1,7 +1,7 @@
 from typing import Tuple, Optional
 import tkinter as tk
 
-from pygammon import GameState, Side
+from engine.engine_types import GameState, Side
 
 BG = "#1a1a1a"
 BOARD_BG = "#2b2318"

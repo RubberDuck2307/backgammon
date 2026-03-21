@@ -2,7 +2,7 @@ from ai.ai_abstract import AiAbstractClass
 from ai.human_input_ai import print_move
 from game_state_dict import UniqueGameStates, Move
 from game_state_generator import get_all_possible_moves
-from pygammon import GameState, Side
+from engine.engine_types import GameState, Side
 
 
 class GreedyBestFirstAi(AiAbstractClass):

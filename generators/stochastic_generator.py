@@ -1,7 +1,7 @@
 import random
 from typing import Tuple, Optional, List, Callable, Dict
 
-from pygammon import GameState, Side
+from engine.engine_types import GameState, Side
 
 import game_state_generator as generator
 from game_state_dict import game_state_key

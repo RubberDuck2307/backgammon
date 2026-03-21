@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, Optional, List
 
-from pygammon import GameState, Side
-from pygammon.structures import DieRolls
+from engine.engine_types import GameState, Side, DieRolls
 
 from game_state_dict import Move
 

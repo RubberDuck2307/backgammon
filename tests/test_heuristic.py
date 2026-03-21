@@ -1,8 +1,7 @@
 import pygammon
 from typing import Optional, Tuple, Union
 
-from pygammon import GameState, OutputType, InvalidMoveCode, Side, InputType
-from pygammon.structures import Point
+from engine.engine_types import GameState, OutputType, InvalidMoveCode, Side, InputType, Point
 
 from ai.greedy_best_first_ai import GreedyBestFirstAi
 from ai.human_input_ai import print_move

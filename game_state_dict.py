@@ -1,4 +1,4 @@
-from pygammon import GameState, InputType
+from engine.engine_types import GameState, InputType
 
 from typing import List, TypedDict, TypeAlias, Optional, Tuple
 

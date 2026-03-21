@@ -1,12 +1,13 @@
 from typing import Union, Tuple, Optional
 
-import pygammon
-from pygammon import GameState, OutputType, InvalidMoveCode, Side, InputType
+from ai.random_ai import RandomAi
+from engine.engine import run_game
+from engine.engine_types import GameState, OutputType, InvalidMoveCode, Side, InputType
 from tqdm import tqdm
 
+from ai.basic_ai import BasicAi
 from ai.human_input_ai import print_move
 from ai.monte_carlo_ai import MonteCarloAi
-from ai.random_ai import RandomAi
 from renderer import BackgammonRenderer
 
 RENDERER = BackgammonRenderer()
@@ -84,7 +85,7 @@ def run_match(first_ai, second_ai, games=100):
     for _ in pbar:
         game = SimulationGame(first_ai, second_ai)
 
-        pygammon.run(game.do_move_handler, game.current_game_state_handler)
+        run_game(game.do_move_handler, game.current_game_state_handler)
 
         winner = game.winner
 
@@ -107,7 +108,7 @@ def run_match(first_ai, second_ai, games=100):
 
 if __name__ == "__main__":
     run_match(
-        MonteCarloAi,
         RandomAi,
-        games=2
+        BasicAi,
+        games=25
     )

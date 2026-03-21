@@ -1,11 +1,11 @@
 import time
 from typing import Union, Tuple, Optional
 
-import pygammon
-from pygammon import GameState, OutputType, InvalidMoveCode, Side, InputType
+from engine.engine_types import GameState, OutputType, InvalidMoveCode, Side, InputType
 
 from ai.basic_ai import BasicAi
 from ai.human_input_ai import print_move
+from engine.engine import run_game
 from renderer import BackgammonRenderer
 
 
@@ -72,4 +72,4 @@ class Game:
 
 # Check https://pygammon.readthedocs.io/en/latest/protocol.html
 game = Game()
-pygammon.run(game.do_move_handler, game.current_game_state_handler)
+run_game(game.do_move_handler, game.current_game_state_handler)

@@ -1,6 +1,6 @@
 from typing import Optional, Tuple
 
-from pygammon import GameState, Side
+from engine.engine_types import GameState, Side
 
 from game_state_dict import PossibleGameState
 from game_state_generator import restore_token, NotPossibleMoveException, move, borne_token, get_hit_tokens, \

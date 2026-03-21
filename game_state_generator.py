@@ -1,5 +1,5 @@
 from typing import TypedDict, TypeAlias, Tuple, Optional, List
-from pygammon import Side, GameState, InputType
+from engine.engine_types import Side, GameState, InputType
 import copy
 
 from game_state_dict import UniqueGameStates, Move, PossibleGameState
@@ -141,6 +141,10 @@ def _token_movement_(game_state: GameState, current_side: Side, from_point: Opti
     from_point can be None if the token is being moved from the bar (hit tokens).
     """
     new_game_state = copy.deepcopy(game_state)
+
+    if from_point is not None:
+        if game_state.board[from_point].side is None or game_state.board[from_point].side != current_side:
+            raise NotPossibleMoveException("No token of the current side on from_point")
 
     if new_game_state.board[to_point].side != current_side and new_game_state.board[to_point].count >= 2:
         raise NotPossibleMoveException("Cannot move token to point occupied by opponent")
