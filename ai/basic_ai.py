@@ -1,3 +1,5 @@
+import random
+
 from engine.engine_types import GameState, Side
 
 from ai.ai_abstract import AiAbstractClass
@@ -32,7 +34,7 @@ class BasicAi(AiAbstractClass):
         home = 0 if self.side == Side.FIRST else 23
         for i, point in enumerate(game_state.board):
             if point.side == self.side:
-                value += point.count * (abs(home - i) + 1)
+                value += point.count * ((home - i) ** 2 + 1)
 
-        value += (game_state.first_hit if self.side == Side.FIRST else game_state.second_hit) * 25
+        value += (game_state.first_hit if self.side == Side.FIRST else game_state.second_hit) * 25 ** 2
         return value
