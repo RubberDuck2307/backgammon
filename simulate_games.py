@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
     run_match(
         Expectiminimaxai,
-        RandomAi,
+        BasicAi,
         games=100,
     )
 
