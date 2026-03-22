@@ -7,9 +7,9 @@ from game_state_generator import get_all_possible_moves_for_side, is_game_over
 from generators.stochastic_generator import all_dice_outcomes_with_probabilities, other_side
 
 
-class ExpectiminimaxAi(AiAbstractClass):
-    # number of full turns to look ahead (chance+decision) after the current move
-    search_depth: int = 2
+class Expectiminimaxai(AiAbstractClass):
+    # number of full turns to look ahead, more than 1 becomes very slow for my pc
+    search_depth: int = 1
 
     def __init__(self, side: Side):
         super().__init__(side)
