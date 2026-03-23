@@ -11,7 +11,7 @@ WINNER_PATTERN = re.compile(r"Game finished!\s*Winner:\s*(\w+)")
 
 def run_single_game(
     first_ai: str = "strategic",
-    second_ai: str = "basic",
+    second_ai: str = "greedy",
     render: bool = False,
     verbose: bool = False,
     timeout_seconds: int = 90,
@@ -50,7 +50,7 @@ def run_single_game(
 def simulate_games(
     n_games: int = 10,
     first_ai: str = "strategic",
-    second_ai: str = "basic",
+    second_ai: str = "greedy",
     render: bool = False,
     verbose: bool = False,
     timeout_seconds: int = 90,
@@ -89,18 +89,19 @@ def simulate_games(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run repeated AI-vs-AI backgammon matches.")
     parser.add_argument("--games", type=int, default=10, help="Number of games to simulate")
+    ai_choices = ["expectiminimax", "greedy", "montecarlo", "human", "strategic", "my"]
     parser.add_argument(
         "--first-ai",
         type=str,
         default="strategic",
-        choices=["basic", "greedy", "montecarlo", "human", "strategic", "my"],
+        choices=ai_choices,
         help="AI used as Side.FIRST",
     )
     parser.add_argument(
         "--second-ai",
         type=str,
-        default="basic",
-        choices=["basic", "greedy", "montecarlo", "human", "strategic", "my"],
+        default="greedy",
+        choices=ai_choices,
         help="AI used as Side.SECOND",
     )
     parser.add_argument("--render", action="store_true", help="Enable renderer while simulating")
@@ -140,14 +141,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    from ai.expectiminimax_ai import Expectiminimaxai
-    from ai.random_ai import RandomAi
-    from ai.basic_ai import BasicAi
-    from simulation.simulation import run_match
-
-    run_match(
-        Expectiminimaxai,
-        BasicAi,
-        games=100,
-    )
-
+    main()
