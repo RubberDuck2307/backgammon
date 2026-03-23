@@ -39,6 +39,7 @@ class Game:
             print(f"{self.turn_counter}. move by player: {Side(side).name}")
             print_move(move)
 
+        time.sleep(1)
         return move
 
     def current_game_state_handler(self, output_type: OutputType,

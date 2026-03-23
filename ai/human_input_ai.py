@@ -13,12 +13,8 @@ class HumanInputAI(AiAbstractClass):
                 print_available_move(move, i)
 
             move_index = int(input("Enter the index of the move you want to make: "))
-            self.chosen_move = available_moves.values()[move_index]["moves_to_reach_it"]
-        move_to_make = self.chosen_move[len(self.chosen_move) - self.move_counter]
-        self.move_counter -= 1
-        if self.move_counter == 0:
-            self.chosen_move = None
-        return move_to_make
+            self.chose_move(available_moves.values()[move_index]["moves_to_reach_it"])
+        return self.proceed_with_move()
 
 
 def print_available_move(move: PossibleGameState, move_index: int):
@@ -30,4 +26,4 @@ def print_move(move: Move):
     if move[1][1] is None:
         print("- Restore token from bar using dice index", move[1][0], )
     else:
-        print("- Move token from point", move[1][1], "using dice", move[1][0])
+        print("- Move token from point", move[1][1] + 1 , "using dice", move[1][0])
