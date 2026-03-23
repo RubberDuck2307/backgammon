@@ -121,3 +121,6 @@ def expectiminimax_value(
 def min_max_score(game_state: GameState, side: Side) -> float:
     return heuristic_new(game_state, other_side(side)) - heuristic_new(game_state, side)
 
+
+ExpectiminimaxAi = Expectiminimaxai
+

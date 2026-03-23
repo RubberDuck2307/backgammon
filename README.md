@@ -7,7 +7,7 @@ Provides functions do_move_handler and current_game_state_handler for the pygamm
 current_game_state_handler() updates the used Ai with the new game state, dice rolls etc... also renders the game using renderer
 
 do_move_handler() asks Ai to move by calling move(), each move needs to be returned separately so if, player has 4 moves (rolled two same numbers)
-the function move is called 4 times and each time it is required to return a single move. Check move() in basic_ai.py to see how it is handled
+the function move is called 4 times and each time it is required to return a single move. Check move() in ai_abstract.py / greedy_best_first_ai.py to see how it is handled
 
 The two Ais playing the game are specified in the __init__ function of Game class and can be replaced by any other class
 that extend the AiAbstract and implement method move()

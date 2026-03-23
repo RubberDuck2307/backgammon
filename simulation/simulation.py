@@ -1,21 +1,27 @@
+import sys
+from pathlib import Path
+
+_root = Path(__file__).resolve().parent.parent
+if str(_root) not in sys.path:
+    sys.path.insert(0, str(_root))
+
 from typing import Union, Tuple, Optional
 
-from ai.random_ai import RandomAi
+from ai.expectiminimax_ai import ExpectiminimaxAi
+from ai.greedy_best_first_ai import GreedyBestFirstAi
+from ai.human_input_ai import print_move
+from ai.strategic_ai import StrategicAi
 from engine.engine import run_game
 from engine.engine_types import GameState, OutputType, InvalidMoveCode, Side, InputType
-from tqdm import tqdm
-
-from ai.basic_ai import BasicAi
-from ai.human_input_ai import print_move
-from ai.monte_carlo_ai import MonteCarloAi
 from renderer import BackgammonRenderer
+from tqdm import tqdm
 
 RENDERER = BackgammonRenderer()
 
-# Lot of code repetition with Game class, refactor to avoid it
+
 class SimulationGame:
 
-    def __init__(self, first_ai_cls, second_ai_cls, log = False):
+    def __init__(self, first_ai_cls, second_ai_cls, log=False):
         self.firstAi = first_ai_cls(Side.FIRST)
         self.secondAi = second_ai_cls(Side.SECOND)
 
@@ -66,7 +72,7 @@ class SimulationGame:
 
         elif output_type == OutputType.INVALID_MOVE:
             RENDERER.render(self.current_game_state)
-            if (self.next_player == Side.FIRST):
+            if self.next_player == Side.FIRST:
                 self.secondAi.update_game_state(self.current_game_state)
             else:
                 self.firstAi.update_game_state(self.current_game_state)
@@ -94,7 +100,6 @@ def run_match(first_ai, second_ai, games=100):
         else:
             second_wins += 1
 
-        # update tqdm line
         pbar.set_postfix({
             "FIRST": first_wins,
             "SECOND": second_wins
@@ -106,9 +111,10 @@ def run_match(first_ai, second_ai, games=100):
     print("FIRST winrate :", first_wins / games)
     print("SECOND winrate:", second_wins / games)
 
+
 if __name__ == "__main__":
-    run_match(
-        RandomAi,
-        BasicAi,
-        games=25
-    )
+    n = 20
+    print("Strategic (FIRST) vs Expectiminimax (SECOND)")
+    run_match(StrategicAi, ExpectiminimaxAi, games=n)
+    print("\nStrategic (FIRST) vs Greedy best-first (SECOND)")
+    run_match(StrategicAi, GreedyBestFirstAi, games=n)
