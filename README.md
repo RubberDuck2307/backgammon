@@ -1,5 +1,79 @@
 Also check the pygammon documentation https://pygammon.readthedocs.io/en/latest/protocol.html#. This one page should be enough
 
+# How to play the game 
+
+## Install and run 
+
+1. Clone the repository and move into the project folder:
+
+```bash
+git clone <your-repo-url>
+cd backgammon
+```
+
+2. Create and activate a virtual environment (recommended):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+3. Install Python dependencies used by the project:
+
+```bash
+pip install pygammon pillow tqdm
+```
+
+4. Install Ghostscript (required by the renderer snapshot export via Pillow/PostScript):
+
+```bash
+brew install ghostscript
+```
+
+5. Run the game:
+
+```bash
+python main.py
+```
+
+## Play as a human (using `ai/human_input_ai.py`)
+
+`main.py` currently creates `Game()` with default AI classes. To play manually, edit the bottom of `main.py` and pass `HumanInputAI` for the side you want to control.
+
+Example (human as FIRST, and which ever AI you want to play against as SECOND):
+
+```python
+from ai.human_input_ai import HumanInputAI
+from ai.random_ai import RandomAI
+
+#or any other AI class
+
+
+#Inside main.py change first_ai_cls to HumanInputAI, and second_ai_cls to the AI you want to play against.
+#line 16-17
+self.firstAi = first_ai_cls(Side.FIRST)
+self.secondAi = second_ai_cls(Side.SECOND)
+```
+Then run:
+
+```bash
+python main.py
+```
+During your turn, the game prints all legal move sequences and asks you to enter the move index. 
+
+## How to simulate games (`simulate_games.py`)
+
+`simulate_games.py` runs repeated AI-vs-AI matches by repeatedly launching `main.py` and counting who wins.
+
+#main.py needs to be reset to: 
+self.firstAi = first_ai_cls(Side.FIRST)
+self.secondAi = second_ai_cls(Side.SECOND)
+
+```bash
+python simulate_games.py
+```
+
+To change the matchup (which AIs play as FIRST/SECOND), edit the defaults at the bottom of `simulate_games.py` (the `run_match(...)` )
 
 # main.py
 Provides functions do_move_handler and current_game_state_handler for the pygammon engine. 
