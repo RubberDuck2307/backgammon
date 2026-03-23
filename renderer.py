@@ -3,6 +3,8 @@ import tkinter as tk
 
 from engine.engine_types import GameState, Side
 
+#Lot of this class was implemented using ClaudeAi
+
 BG = "#1a1a1a"
 BOARD_BG = "#2b2318"
 POINT_A = "#8b3a2a"  # dark red triangle
