@@ -2,6 +2,7 @@ import os
 import time
 from typing import Union, Tuple, Optional, Type
 
+from ai.random_ai import RandomAi
 from engine.engine_types import GameState, OutputType, InvalidMoveCode, Side, InputType
 
 from ai.ai_abstract import AiAbstractClass
@@ -14,41 +15,12 @@ from engine.engine import run_game
 from renderer import BackgammonRenderer
 
 
-def _env_bool(name: str, default: bool = False) -> bool:
-    v = os.environ.get(name, "").strip().lower()
-    if v in ("1", "true", "yes", "on"):
-        return True
-    if v in ("0", "false", "no", "off"):
-        return False
-    return default
-
-
-_AI_REGISTRY: dict[str, Type[AiAbstractClass]] = {
-    "strategic": StrategicAi,
-    "greedy": GreedyBestFirstAi,
-    "montecarlo": MonteCarloAi,
-    "human": HumanInputAI,
-    "my": ExpectiminimaxAi,
-    "expectiminimax": ExpectiminimaxAi,
-}
-
-
-def resolve_ai_class(name: str) -> Type[AiAbstractClass]:
-    key = (name or "strategic").strip().lower()
-    cls = _AI_REGISTRY.get(key)
-    if cls is None:
-        allowed = ", ".join(sorted(_AI_REGISTRY))
-        raise ValueError(f"Unknown AI {name!r}. Choose one of: {allowed}")
-    return cls
-
-
 class Game:
 
     def __init__(
         self,
-        first_ai_cls=StrategicAi,
-        second_ai_cls=GreedyBestFirstAi,
-        *,
+        first_ai_cls,
+        second_ai_cls,
         render: bool = True,
         verbose: bool = True,
     ):
@@ -110,15 +82,9 @@ class Game:
                 time.sleep(3)
 
 
-_first = os.environ.get("FIRST_AI", "strategic")
-_second = os.environ.get("SECOND_AI", "greedy")
-_render = _env_bool("RENDER", default=True)
-_verbose = _env_bool("VERBOSE", default=True)
 
 game = Game(
-    first_ai_cls=resolve_ai_class(_first),
-    second_ai_cls=resolve_ai_class(_second),
-    render=_render,
-    verbose=_verbose,
+    first_ai_cls=RandomAi,
+    second_ai_cls=HumanInputAI
 )
 run_game(game.do_move_handler, game.current_game_state_handler)

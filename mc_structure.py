@@ -88,7 +88,7 @@ class DiceNode:
 
     def best_child(self, side, n: int = 3) -> PossibleGameState:
         if self.deciding_side != side:
-            raise ValueError("Can only find best child for the side that made the decision at this node")
+            raise ValueError("")
         children = list(self.next_game_states.values())
 
         top_children = sorted(children, key=lambda c: c.visits, reverse=True)[:n]
